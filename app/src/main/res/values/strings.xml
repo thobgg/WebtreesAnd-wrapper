@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">webtrees</string>
+    <string name="url_prompt">URL deiner webtrees-Installation:</string>
+    <string name="url_hint">https://webtrees.example.com</string>
+    <string name="url_invalid">Bitte eine vollständige Adresse eingeben, etwa https://webtrees.example.com</string>
+    <string name="url_unreachable">Die Instanz war nicht erreichbar. Adresse prüfen oder korrigieren.</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+</resources>

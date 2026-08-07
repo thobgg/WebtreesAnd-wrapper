@@ -1,0 +1,27 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Signierung — niemals einchecken
+keystore.properties
+*.jks
+*.keystore
+
+# Release-Artefakte
+/app/release/
+/app/debug/
+
+# IDE
+/.idea/
