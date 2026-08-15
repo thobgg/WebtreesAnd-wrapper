@@ -3,9 +3,14 @@ package de.bgghome.webtrees
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.CookieManager
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -19,10 +24,16 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
+    private lateinit var container: FrameLayout
+
+    /** Die Ansicht, die das WebView fürs Vollbild anliefert; null heißt: kein Vollbild. */
+    private var vollbildAnsicht: View? = null
+    private var vollbildRueckruf: WebChromeClient.CustomViewCallback? = null
 
     companion object {
         private const val PREFS = "webtrees"
@@ -38,6 +49,14 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = true
+
+        // Nur im Debug-Build: macht die App über adb als Inspektionsziel sichtbar.
+        // Gelesen wird das Flag aus der Installation, nicht aus BuildConfig — die
+        // Klasse wird erst erzeugt, wenn man buildFeatures.buildConfig einschaltet.
+        val debuggierbar = applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+        WebView.setWebContentsDebuggingEnabled(debuggierbar)
+
+        container = FrameLayout(this)
 
         webView = WebView(this).apply {
             settings.javaScriptEnabled = true
@@ -78,21 +97,50 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            // Ohne WebChromeClient läuft die Vollbild-Anfrage einer Seite ins Leere.
+            // Fotogalerien und Videos brauchen sie, um die Leisten loszuwerden.
+            webChromeClient = object : WebChromeClient() {
+                override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+                    if (vollbildAnsicht != null) {
+                        callback.onCustomViewHidden()
+                        return
+                    }
+                    vollbildAnsicht = view
+                    vollbildRueckruf = callback
+                    webView.visibility = View.GONE
+                    container.addView(
+                        view,
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                    )
+                    // Im Vollbild gibt es nichts zu umpolstern, die Leisten sind weg.
+                    container.setPadding(0, 0, 0, 0)
+                    systemleisten(sichtbar = false)
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+
+                override fun onHideCustomView() = beendeVollbild()
+            }
+
             // PDFs und andere Downloads an externen Viewer weitergeben
             setDownloadListener { url, _, _, _, _ ->
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
             }
         }
 
-        val container = FrameLayout(this).apply {
-            addView(webView)
-        }
+        container.addView(webView)
         setContentView(container)
 
         ViewCompat.setOnApplyWindowInsetsListener(container) { view, windowInsets ->
             val types = WindowInsetsCompat.Type.systemBars() or
                     WindowInsetsCompat.Type.displayCutout()
-            val insets = windowInsets.getInsets(types)
+            val insets = if (vollbildAnsicht == null) {
+                windowInsets.getInsets(types)
+            } else {
+                Insets.NONE
+            }
             view.setPadding(insets.left, insets.top, insets.right, insets.bottom)
             return@setOnApplyWindowInsetsListener WindowInsetsCompat.Builder(windowInsets)
                 .setInsets(types, Insets.NONE)
@@ -101,7 +149,13 @@ class MainActivity : ComponentActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (webView.canGoBack()) webView.goBack() else finish()
+                when {
+                    // Im Vollbild ist die Zurück-Taste der Ausgang aus dem Vollbild,
+                    // nicht aus der Seite.
+                    vollbildAnsicht != null -> beendeVollbild()
+                    webView.canGoBack() -> webView.goBack()
+                    else -> finish()
+                }
             }
         })
 
@@ -112,6 +166,38 @@ class MainActivity : ComponentActivity() {
 
         val stored = prefs.getString(KEY_URL, null)
         if (stored.isNullOrBlank()) askForUrl(null) else webView.loadUrl(stored)
+    }
+
+    /**
+     * Räumt das Vollbild ab: Ansicht raus, WebView zurück, Leisten wieder her.
+     * Wird sowohl vom WebView (Seite verlässt das Vollbild) als auch von der
+     * Zurück-Taste aufgerufen und verträgt beides mehrfach.
+     */
+    private fun beendeVollbild() {
+        val ansicht = vollbildAnsicht ?: return
+        container.removeView(ansicht)
+        vollbildAnsicht = null
+        webView.visibility = View.VISIBLE
+        vollbildRueckruf?.onCustomViewHidden()
+        vollbildRueckruf = null
+        systemleisten(sichtbar = true)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        ViewCompat.requestApplyInsets(container)
+    }
+
+    /**
+     * Status- und Navigationsleiste ein- oder ausblenden. Ausgeblendet kommen sie
+     * auf ein Wischen vom Rand kurz zurück und verschwinden wieder von selbst.
+     */
+    private fun systemleisten(sichtbar: Boolean) {
+        val steuerung = WindowCompat.getInsetsController(window, window.decorView)
+        steuerung.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        if (sichtbar) {
+            steuerung.show(WindowInsetsCompat.Type.systemBars())
+        } else {
+            steuerung.hide(WindowInsetsCompat.Type.systemBars())
+        }
     }
 
     /**
