@@ -1,6 +1,6 @@
 # WebtreesAnd
 
-### [⬇ APK herunterladen (v1.2)](https://github.com/thobgg/WebtreesAnd/releases/latest/download/WebtreesAnd-1.2.apk)
+### [⬇ APK herunterladen (v1.3)](https://github.com/thobgg/WebtreesAnd/releases/latest/download/WebtreesAnd-1.3.apk)
 
 [![Release](https://img.shields.io/github/v/release/thobgg/WebtreesAnd?label=Release&color=2E75B6)](https://github.com/thobgg/WebtreesAnd/releases/latest)
 [![Lizenz](https://img.shields.io/badge/Lizenz-GPL--3.0-c8922a)](LICENSE)
