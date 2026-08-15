@@ -44,6 +44,13 @@ fragt die App erneut — so kommt man auch an einem Tippfehler wieder vorbei.
 Es gibt keine Benutzerkonten, keine Analyse, keine Netzwerkzugriffe außer denen, die die
 webtrees-Instanz selbst auslöst. Die einzige Berechtigung ist `INTERNET`.
 
+Wozu das gut ist, zeigt sich am deutlichsten bei Bildergalerien. Am Galaxy S25 Ultra
+gemessen, quer gehalten: die Browserleisten kosten rund 86 von 384 Pixeln Höhe, die
+Systemleisten weitere 34. In der App fallen beide weg. Ein 3:2-Foto in der Galerie des
+Moduls [Sammlungen](https://github.com/thobgg/webtrees-sammlungen) kommt damit auf
+576 × 384 statt 284 × 189 Punkte. Nötig ist die App dafür nicht – im Browser
+funktioniert alles, es bleibt nur weniger Bild.
+
 ## Installation
 
 1. [APK herunterladen](https://github.com/thobgg/WebtreesAnd/releases/latest) — alle
