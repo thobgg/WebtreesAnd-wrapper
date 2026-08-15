@@ -33,7 +33,10 @@ fragt die App erneut — so kommt man auch an einem Tippfehler wieder vorbei.
 * Zurück-Taste navigiert in der WebView-Historie, statt die App zu schließen
 * Downloads und PDFs werden an den externen Viewer weitergereicht
 * `mailto:`- und `tel:`-Links gehen an die zuständige App
-* Zoom aktiviert, Darstellung randlos unter Status- und Navigationsleiste
+* Randlos: Status- und Navigationsleiste bleiben ausgeblendet, ein Wischen vom Rand
+  holt sie kurz zurück - im Browser geht das nur über die Vollbild-API, die jedes Mal
+  einen Hinweis einblendet
+* Zoom aktiviert
 * Vollbild: fordert eine Seite es an (etwa eine Bildergalerie), gehen Status- und
   Navigationsleiste weg und kommen auf ein Wischen vom Rand zurück; die Zurück-Taste
   beendet dann das Vollbild statt in der Historie zu blättern

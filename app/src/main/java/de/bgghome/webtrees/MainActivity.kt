@@ -50,6 +50,12 @@ class MainActivity : ComponentActivity() {
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = true
 
+        // Status- und Navigationsleiste bleiben aus. Der Browser kann Leisten
+        // nur über die Vollbild-API loswerden und quittiert das jedes Mal mit
+        // einem Hinweis; hier ist es einfach der Normalzustand, wie in jeder
+        // Bildbetrachter-App. Ein Wischen vom Rand holt sie kurz zurück.
+        systemleisten(sichtbar = false)
+
         // Nur im Debug-Build: macht die App über adb als Inspektionsziel sichtbar.
         // Gelesen wird das Flag aus der Installation, nicht aus BuildConfig — die
         // Klasse wird erst erzeugt, wenn man buildFeatures.buildConfig einschaltet.
@@ -169,7 +175,17 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
-     * Räumt das Vollbild ab: Ansicht raus, WebView zurück, Leisten wieder her.
+     * Nach jedem Rückkehren in den Vordergrund erneut ausblenden: Android zeigt
+     * die Leisten unter anderem nach einem Dialog, einem App-Wechsel oder dem
+     * Entsperren wieder an, und sie blieben sonst stehen.
+     */
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) systemleisten(sichtbar = false)
+    }
+
+    /**
+     * Räumt das Vollbild ab: Ansicht raus, WebView zurück, Leisten bleiben aus.
      * Wird sowohl vom WebView (Seite verlässt das Vollbild) als auch von der
      * Zurück-Taste aufgerufen und verträgt beides mehrfach.
      */
@@ -180,7 +196,8 @@ class MainActivity : ComponentActivity() {
         webView.visibility = View.VISIBLE
         vollbildRueckruf?.onCustomViewHidden()
         vollbildRueckruf = null
-        systemleisten(sichtbar = true)
+        // Ausgeblendet bleiben die Leisten ohnehin - nur der wache Bildschirm
+        // war eine Zugabe des Vollbilds.
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         ViewCompat.requestApplyInsets(container)
     }
@@ -188,6 +205,8 @@ class MainActivity : ComponentActivity() {
     /**
      * Status- und Navigationsleiste ein- oder ausblenden. Ausgeblendet kommen sie
      * auf ein Wischen vom Rand kurz zurück und verschwinden wieder von selbst.
+     * Ausgeblendet ist der Normalzustand der App; sichtbar wird nur gebraucht,
+     * falls das jemand später wieder zur Wahl stellen will.
      */
     private fun systemleisten(sichtbar: Boolean) {
         val steuerung = WindowCompat.getInsetsController(window, window.decorView)
