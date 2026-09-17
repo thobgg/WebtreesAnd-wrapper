@@ -1,5 +1,9 @@
 # WebtreesAnd – der Wrapper
 
+> **Neu:** Eine native App für webtrees – Stammbaum ansehen *und bearbeiten*, mit eigenem webtrees-Modul –
+> gibt es unter **[WebtreesAnd](https://github.com/thobgg/WebtreesAnd)**. Dieser Wrapper bleibt die schlanke Lösung für alle,
+> die auf ihrem Server kein Modul installieren möchten.
+
 ### [⬇ APK herunterladen (v1.3)](https://github.com/thobgg/WebtreesAnd-wrapper/releases/latest/download/WebtreesAnd-1.3.apk)
 
 [![Release](https://img.shields.io/github/v/release/thobgg/WebtreesAnd-wrapper?label=Release&color=2E75B6)](https://github.com/thobgg/WebtreesAnd-wrapper/releases/latest)
