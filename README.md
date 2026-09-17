@@ -1,8 +1,8 @@
-# WebtreesAnd
+# WebtreesAnd – der Wrapper
 
-### [⬇ APK herunterladen (v1.3)](https://github.com/thobgg/WebtreesAnd/releases/latest/download/WebtreesAnd-1.3.apk)
+### [⬇ APK herunterladen (v1.3)](https://github.com/thobgg/WebtreesAnd-wrapper/releases/latest/download/WebtreesAnd-1.3.apk)
 
-[![Release](https://img.shields.io/github/v/release/thobgg/WebtreesAnd?label=Release&color=2E75B6)](https://github.com/thobgg/WebtreesAnd/releases/latest)
+[![Release](https://img.shields.io/github/v/release/thobgg/WebtreesAnd-wrapper?label=Release&color=2E75B6)](https://github.com/thobgg/WebtreesAnd-wrapper/releases/latest)
 [![Lizenz](https://img.shields.io/badge/Lizenz-GPL--3.0-c8922a)](LICENSE)
 [![Android](https://img.shields.io/badge/Android-7.0%2B-3ddc84)](#installation)
 
@@ -53,7 +53,7 @@ funktioniert alles, es bleibt nur weniger Bild.
 
 ## Installation
 
-1. [APK herunterladen](https://github.com/thobgg/WebtreesAnd/releases/latest) — alle
+1. [APK herunterladen](https://github.com/thobgg/WebtreesAnd-wrapper/releases/latest) — alle
    Fassungen liegen unter *Releases*, nicht im Dateibaum des Repos
 2. Datei auf dem Gerät öffnen. Android fragt beim ersten Mal, ob die installierende App
    (Browser oder Dateimanager) unbekannte Apps installieren darf — einmalig erlauben
@@ -66,8 +66,8 @@ bestehende Installation einspielen, ohne sie vorher zu entfernen.
 ## Selbst bauen
 
 ```bash
-git clone https://github.com/thobgg/WebtreesAnd.git
-cd WebtreesAnd
+git clone https://github.com/thobgg/WebtreesAnd-wrapper.git
+cd WebtreesAnd-wrapper
 ./gradlew assembleDebug
 ```
 
